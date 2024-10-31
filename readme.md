@@ -121,13 +121,15 @@ Make sure to have the following installed on your machine:
 
    ```bash
    # Backend setup
-   cd backend
+   npm install
+   npm run server
+
+   # Client setup
+   cd client
    npm install
    npm run dev
 
-   # Frontend setup
-   cd ../client
-   npm install
+   # Both Client and Server Setup
    npm run dev
    ```
 
