@@ -10,12 +10,17 @@ import TaskViewModal from "./TaskViewModal";
 
 import { Button, DatePicker, message, Tag } from "antd";
 import { FaSearchPlus } from "react-icons/fa";
+import useAuth from "./../../hooks/useAuth";
 const { RangePicker } = DatePicker;
 
 const TaskDataTable = ({ data, refetch }) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [taskId, settaskId] = useState(null);
 	const [current, setCurrent] = useState(1);
+
+	const user = useAuth();
+
+	const isAdmin = user.role === "admin";
 
 	const [viewModalVisible, setViewModalVisible] = useState(false);
 	const [selectedTask, setSelectedTask] = useState(null);
@@ -85,6 +90,48 @@ const TaskDataTable = ({ data, refetch }) => {
 			dataIndex: "title",
 			key: "title",
 		},
+		...(isAdmin
+			? [
+					{
+						title: "Created By",
+						dataIndex: "createdBy",
+						key: "createdBy",
+						render: (_, record) => {
+							// Get the first character of the first name
+							const initial = record?.createdBy?.firstName
+								.charAt(0)
+								.toUpperCase();
+
+							return (
+								<div style={{ display: "flex", alignItems: "center" }}>
+									<div
+										style={{
+											width: "35px",
+											height: "35px",
+											borderRadius: "50%",
+											backgroundColor: "#6688",
+											color: "white",
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center",
+											marginRight: "10px",
+											fontWeight: "bold",
+											fontSize: "16px",
+										}}
+									>
+										{initial}
+									</div>
+									<span>{`${record?.createdBy?.firstName} ${
+										record?.createdBy?.lastName
+											? record?.createdBy?.lastName
+											: ""
+									}`}</span>
+								</div>
+							);
+						},
+					},
+			  ]
+			: []),
 		{
 			title: "Start Date",
 			dataIndex: "startDate",

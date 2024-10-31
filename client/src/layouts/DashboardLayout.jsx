@@ -59,35 +59,54 @@ const DashboardLayout = () => {
 			<Loader />
 		</div>
 	) : (
-		<Layout>
+		<Layout style={{ height: "100vh", overflow: "hidden" }}>
+			{" "}
+			{/* Ensures the layout fills the viewport */}
 			<Sider
 				breakpoint="lg"
 				collapsedWidth="0"
 				collapsed={collapsed}
 				onCollapse={(collapsed) => setCollapsed(collapsed)}
+				style={{
+					position: "fixed",
+					height: "100vh",
+					overflow: "auto",
+				}}
 			>
 				<Sidebar collapsed={collapsed} onCollapse={setCollapsed} />
 			</Sider>
-			<Layout>
+			{/* Main layout shift for content beside the sidebar */}
+			<Layout
+				style={{
+					marginLeft: collapsed ? 0 : 200, // Adjust based on the sidebar's width when expanded
+					paddingTop: "0px",
+					height: "100vh",
+					overflow: "hidden", // Prevents overflow of the full layout
+				}}
+			>
 				<Header
 					profileMenuItems={profileMenuItems}
 					toggleSidebar={toggleSidebar}
+					style={{
+						position: "fixed",
+						top: 0,
+						width: `calc(100% - ${collapsed ? "0" : "200px"})`, // Adjust width based on sidebar
+						zIndex: 10,
+					}}
 				/>
+				{/* Content layout that scrolls only when overflow occurs */}
 				<Content
 					style={{
 						margin: "24px 16px 0",
 						padding: 24,
-						minHeight: 360,
 						background: colorBgContainer,
 						borderRadius: borderRadiusLG,
-						height: "80vh",
+						overflowY: "auto",
+						height: "calc(100vh - 88px)", // Adjust for header and margin
 					}}
 				>
 					<Outlet />
 				</Content>
-				<Footer style={{ textAlign: "center" }}>
-					Task Management ©{new Date().getFullYear()} Develop by Naimat Ullah
-				</Footer>
 			</Layout>
 		</Layout>
 	);

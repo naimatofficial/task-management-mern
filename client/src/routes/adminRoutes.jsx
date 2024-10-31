@@ -1,6 +1,8 @@
 import DashboardLayout from "../layouts/DashboardLayout";
 import Dashboard from "../pages/Dashboard";
 import AddTaskPage from "../pages/Task/AddTaskPage";
+import EditTaskPage from "../pages/Task/EditTaskPage";
+import TaskBoardPage from "../pages/Task/TaskBoardPage";
 import TasksPage from "../pages/Task/TasksPage";
 import TaskAssignPage from "../pages/TaskAssign/TaskAssignPage";
 import AddUserPage from "../pages/User/AddUserPage";
@@ -37,8 +39,16 @@ const adminRoutes = [
 				element: <AddTaskPage />,
 			},
 			{
+				path: "/tasks/edit/:id",
+				element: <EditTaskPage />,
+			},
+			{
 				path: "/task/assigns",
 				element: <TaskAssignPage />,
+			},
+			{
+				path: "/tasks-board",
+				element: <TaskBoardPage />,
 			},
 		],
 	},

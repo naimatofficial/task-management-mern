@@ -16,7 +16,10 @@ const router = express.Router();
 router.post("/login", login);
 router.post("/logout", protect, logout);
 
-router.route("/").post(protect, restrictTo("admin"), createUser).get(getUsers);
+router
+	.route("/")
+	.post(protect, restrictTo("admin"), createUser)
+	.get(protect, restrictTo("admin", "manager"), getUsers);
 
 router
 	.route("/:id", checkObjectId)

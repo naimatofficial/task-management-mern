@@ -1,18 +1,20 @@
 import Task from "../models/taskModel.js";
-import {
-	createOne,
-	deleteOne,
-	getAll,
-	getOne,
-	updateOne,
-} from "./handleFactory.js";
+import { updateStatus } from "./handleFactory.js";
 
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import APIFeatures from "../utils/apiFeatures.js";
 
-export const createUserTask = catchAsync(async (req, res, next) => {
-	const { title, description, status, startDate, endDate } = req.body;
+export const createTask = catchAsync(async (req, res, next) => {
+	const {
+		title,
+		description,
+		status = "pending",
+		startDate,
+		endDate,
+	} = req.body;
+
+	const userId = req.user._id.toString();
 
 	const taskData = {
 		title,
@@ -20,7 +22,7 @@ export const createUserTask = catchAsync(async (req, res, next) => {
 		status,
 		startDate,
 		endDate,
-		createdBy: req.user.userId, // Assigning the creator of the task
+		createdBy: userId,
 	};
 
 	const task = await Task.create(taskData);
@@ -31,18 +33,23 @@ export const createUserTask = catchAsync(async (req, res, next) => {
 	});
 });
 
-export const updateUserTask = catchAsync(async (req, res, next) => {
+export const updateTask = catchAsync(async (req, res, next) => {
 	const { id } = req.params;
 	const { title, description, status, startDate, endDate } = req.body;
+	const userId = req.user._id.toString();
+
+	const isAdmin = req.user.role === "admin";
 
 	const task = await Task.findById(id);
 
 	if (!task) {
-		return next(new AppError("Task not found.", 404));
+		return next(new AppError("No task found with that ID", 404));
 	}
 
+	const createdBy = task.createdBy._id.toString();
+
 	// Check if the current user is allowed to update the task
-	if (task.createdBy?._id?.toString() !== req.user?._id?.toString()) {
+	if (createdBy !== userId && !isAdmin) {
 		return next(
 			new AppError("You don't have permission to edit this task.", 403)
 		);
@@ -69,28 +76,33 @@ export const updateUserTask = catchAsync(async (req, res, next) => {
 	});
 });
 
-export const deleteUserTask = catchAsync(async (req, res, next) => {
+export const deleteTask = catchAsync(async (req, res, next) => {
 	const { id } = req.params;
+	const userId = req.user._id.toString();
+
+	const isAdmin = req.user.role === "admin";
 
 	const task = await Task.findById(id);
 
-	if (task.createdBy !== req.user.userId) {
+	if (!task) {
+		return next(new AppError("No task found with that ID", 404));
+	}
+
+	const createdBy = task.createdBy._id.toString();
+
+	if (createdBy !== userId && !isAdmin) {
 		return next(
 			new AppError("You don't have permission to delete this task.", 404)
 		);
 	}
 
 	// Ensure the task belongs to the user
-	const doc = await Task.findOneAndDelete(
-		{
-			_id: id,
-			createdBy: req.user.userId,
-		},
-		{
-			new: true,
-			runValidators: true,
-		}
-	);
+	const doc = isAdmin
+		? await Task.findByIdAndDelete(id)
+		: await Task.findOneAndDelete({
+				_id: id,
+				createdBy: userId,
+		  });
 
 	if (!doc) {
 		return next(new AppError("No task found with that ID", 404));
@@ -102,27 +114,37 @@ export const deleteUserTask = catchAsync(async (req, res, next) => {
 	});
 });
 
-export const getUserTask = catchAsync(async (req, res, next) => {
+export const getTask = catchAsync(async (req, res, next) => {
 	const { id } = req.params;
+	const userId = req.user._id.toString();
 
-	// Ensure the task belongs to the user
-	const task = await Task.findOne({ _id: id, createdBy: req.user.userId });
+	const doc =
+		req.user.role === "admin"
+			? await Task.findOne({
+					_id: id,
+			  }).lean()
+			: await Task.findOne({
+					_id: id,
+					createdBy: userId,
+			  }).lean();
 
-	if (!task) {
+	if (!doc) {
 		return next(new AppError("No task found with that ID", 404));
 	}
 
 	res.status(200).json({
 		status: "success",
-		doc: task,
+		doc,
 	});
 });
 
-export const getAllUserTasks = catchAsync(async (req, res) => {
+export const getAllTasks = catchAsync(async (req, res, next) => {
 	// Fetch only tasks that belong to the user
-	const user = req.user;
+	const userId = req.user._id.toString();
 
-	let query = Task.find({ createdBy: user.userId });
+	const isAdmin = req.user.role === "admin";
+
+	const query = Task.find(isAdmin ? {} : { createdBy: userId });
 
 	// EXECUTE QUERY
 	const features = new APIFeatures(query, req.query)
@@ -132,7 +154,6 @@ export const getAllUserTasks = catchAsync(async (req, res) => {
 		.paginate();
 
 	// for more detailed about query
-	// const doc = await features.query.explain();
 	const doc = await features.query;
 
 	res.status(200).json({
@@ -142,9 +163,4 @@ export const getAllUserTasks = catchAsync(async (req, res) => {
 	});
 });
 
-// For Admin operations
-export const createTask = createOne(Task);
-export const getTasks = getAll(Task);
-export const getTask = getOne(Task);
-export const deleteTask = deleteOne(Task);
-export const updateTask = updateOne(Task);
+export const updateTaskStatus = updateStatus(Task);

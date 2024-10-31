@@ -2,28 +2,14 @@ import { useGetTasksQuery } from "./../../redux/slice/taskSlice";
 import Loader from "./../../components/shared/Loader";
 import { Link } from "react-router-dom";
 import TaskDataTable from "../../components/Task/TaskDataTable";
-import useAuth from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { Button, Input } from "antd";
 
 const TasksPage = () => {
-	const user = useAuth();
-	const [userId, setUserId] = useState(null);
-
 	const [searchText, setSearchText] = useState("");
 	const [filteredData, setFilteredData] = useState([]);
 
-	useEffect(() => {
-		if (user?.role === "manager" || user?.role === "user") {
-			setUserId(user?._id);
-		}
-	}, [user]);
-
-	const {
-		data: tasks,
-		isLoading,
-		refetch,
-	} = useGetTasksQuery(userId ? { createdBy: userId } : {}, { skip: !user });
+	const { data: tasks, isLoading, refetch } = useGetTasksQuery({});
 
 	useEffect(() => {
 		if (tasks?.doc) {

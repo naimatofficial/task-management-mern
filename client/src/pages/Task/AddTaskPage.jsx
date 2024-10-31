@@ -22,7 +22,7 @@ const AddTaskPage = () => {
 	return (
 		<div className="max-w mx-auto mt-10">
 			<h1 className="text-2xl font-bold mb-4">Create New Task</h1>
-			<TaskForm mode="edit" onSubmit={handleSubmit} isLoading={isLoading} />
+			<TaskForm mode="add" onSubmit={handleSubmit} isLoading={isLoading} />
 		</div>
 	);
 };

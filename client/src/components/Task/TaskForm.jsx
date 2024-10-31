@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import PropTypes from "prop-types";
-import { Form, Input, DatePicker, Row, Col, Button } from "antd";
+import { Form, Input, DatePicker, Row, Col, Button, Select } from "antd";
 import { useForm } from "antd/es/form/Form";
 import moment from "moment";
 
@@ -28,23 +28,45 @@ const TaskForm = ({ mode, onSubmit, initialValues, isLoading }) => {
 	return (
 		<Form form={form} layout="vertical" onFinish={onFinish}>
 			{/* Title Field */}
-			<Form.Item
-				name="title"
-				label="Task Title"
-				rules={[
-					{
-						required: true,
-						message: "Please provide the task title.",
-					},
-					{
-						max: 512,
-						message: "Title cannot exceed 512 characters.",
-					},
-				]}
-			>
-				<Input placeholder="Enter task title" />
-			</Form.Item>
+			<Row gutter={16}>
+				<Col xs={24} lg={12}>
+					<Form.Item
+						name="title"
+						label="Task Title"
+						rules={[
+							{
+								required: true,
+								message: "Please provide the task title.",
+							},
+							{
+								max: 512,
+								message: "Title cannot exceed 512 characters.",
+							},
+						]}
+					>
+						<Input placeholder="Enter task title" />
+					</Form.Item>
+				</Col>
 
+				<Col xs={24} lg={12}>
+					<Form.Item
+						name="status"
+						label="Task Status"
+						rules={[
+							{
+								required: true,
+								message: "Please select the task status.",
+							},
+						]}
+					>
+						<Select placeholder="Select task status">
+							<Select.Option value="pending">Pending</Select.Option>
+							<Select.Option value="in-progress">In-progress</Select.Option>
+							<Select.Option value="completed">Completed</Select.Option>
+						</Select>
+					</Form.Item>
+				</Col>
+			</Row>
 			<Row gutter={16}>
 				{/* Start Date Field */}
 				<Col xs={24} lg={12}>
