@@ -8,10 +8,13 @@ import DataTable from "../shared/DataTable";
 import { useDeleteTaskAssignMutation } from "../../redux/slice/taskAssignSlice";
 import moment from "moment";
 import { FaSearchPlus } from "react-icons/fa";
+import TaskAssignViewModal from "./TaskAssignViewModal";
 const { RangePicker } = DatePicker;
 
 const TaskAssignDataTable = ({ data, refetch, user }) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [viewModalVisible, setViewModalVisible] = useState(false);
+	const [selectedTask, setSelectedTask] = useState(null);
 	const [taskAssignId, setTaskAssignId] = useState(null);
 	const [current, setCurrent] = useState(1);
 
@@ -36,16 +39,22 @@ const TaskAssignDataTable = ({ data, refetch, user }) => {
 		setTaskAssignId(id);
 	};
 
+	const handleView = (task) => {
+		setSelectedTask(task);
+		setViewModalVisible(true);
+	};
+
+	const handleViewModalClose = () => {
+		setViewModalVisible(false); // Hide the modal
+		setSelectedTask(null);
+	};
+
 	const handleCancel = () => {
 		setIsModalVisible(false);
 	};
 
 	const handleEdit = (id) => {
 		navigate(`/task/assigns/edit/${id}`);
-	};
-
-	const handleView = (id) => {
-		navigate(`/task/assigns/${id}`);
 	};
 
 	const handleDeleteTaskAssign = async () => {
@@ -257,7 +266,7 @@ const TaskAssignDataTable = ({ data, refetch, user }) => {
 								<ActionMenu
 									recordId={record._id}
 									onEdit={() => handleEdit(record._id)}
-									onView={() => handleView(record._id)}
+									onView={() => handleView(record)}
 									onDelete={() => showModal(record._id)}
 								/>
 							</div>
@@ -277,6 +286,13 @@ const TaskAssignDataTable = ({ data, refetch, user }) => {
 				current={current}
 				setCurrent={setCurrent}
 				pageSize={pageSize}
+			/>
+
+			{/* Task View Modal */}
+			<TaskAssignViewModal
+				visible={viewModalVisible}
+				onClose={handleViewModalClose}
+				taskAssign={selectedTask}
 			/>
 
 			{/* Delete confirmation modal */}

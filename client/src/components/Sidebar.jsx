@@ -63,8 +63,6 @@ const Sidebar = () => {
 
 	return (
 		<div style={{ height: "100%", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
-			{" "}
-			{/* Dark, semi-transparent background */}
 			<Menu
 				theme="dark"
 				mode="inline"
