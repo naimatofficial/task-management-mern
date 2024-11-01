@@ -4,28 +4,83 @@ import catchAsync from "../utils/catchAsync.js";
 import AppError from "./../utils/appError.js";
 
 export const getDashboardStats = catchAsync(async (req, res, next) => {
-	// Count total users and filter by role to get managers
-	const totalUsers = await User.countDocuments();
-	const totalManagers = await User.countDocuments({ role: "manager" });
+	const user = req.user;
 
-	// Count total tasks and filter by status
-	const totalTasks = await Task.countDocuments();
-	const tasksByStatus = {
-		pending: await Task.countDocuments({ status: "pending" }),
-		inProgress: await Task.countDocuments({ status: "in-progress" }),
-		completed: await Task.countDocuments({ status: "completed" }),
-	};
+	let dashboardStats;
 
-	const stats = {
-		totalTasks,
-		tasksByStatus,
-		totalUsers,
-		totalManagers,
-	};
+	// Check user role
+	if (user.role === "admin") {
+		// Admin stats: Fetch all data
+		const totalUsers = await User.countDocuments();
+		const totalManagers = await User.countDocuments({ role: "manager" });
+		const totalTasks = await Task.countDocuments();
+		const tasksByStatus = {
+			pending: await Task.countDocuments({ status: "pending" }),
+			inProgress: await Task.countDocuments({ status: "in-progress" }),
+			completed: await Task.countDocuments({ status: "completed" }),
+		};
+
+		dashboardStats = {
+			totalUsers,
+			totalManagers,
+			totalTasks,
+			tasksByStatus,
+		};
+	} else if (user.role === "manager") {
+		// Manager stats: Fetch stats related to tasks assigned to them
+		const totalTasks = await Task.countDocuments({ createdBy: user._id });
+		const tasksByStatus = {
+			pending: await Task.countDocuments({
+				status: "pending",
+				createdBy: user._id,
+			}),
+			inProgress: await Task.countDocuments({
+				status: "in-progress",
+				createdBy: user._id,
+			}),
+			completed: await Task.countDocuments({
+				status: "completed",
+				createdBy: user._id,
+			}),
+		};
+
+		dashboardStats = {
+			totalTasks,
+			tasksByStatus,
+		};
+	} else if (user.role === "user") {
+		// User stats: Fetch stats for their own tasks
+		const totalTasks = await Task.countDocuments({ createdBy: user._id });
+		const tasksByStatus = {
+			pending: await Task.countDocuments({
+				status: "pending",
+				createdBy: user._id,
+			}),
+			inProgress: await Task.countDocuments({
+				status: "in-progress",
+				createdBy: user._id,
+			}),
+			completed: await Task.countDocuments({
+				status: "completed",
+				createdBy: user._id,
+			}),
+		};
+
+		dashboardStats = {
+			totalTasks,
+			tasksByStatus,
+		};
+	} else {
+		// If role is not recognized
+		return res.status(403).json({
+			status: "fail",
+			message: "You do not have permission to access this data.",
+		});
+	}
 
 	res.status(200).json({
 		status: "success",
-		doc: stats,
+		doc: dashboardStats,
 	});
 });
 

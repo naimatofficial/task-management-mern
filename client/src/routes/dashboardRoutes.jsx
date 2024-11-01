@@ -2,14 +2,16 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import Dashboard from "../pages/Dashboard";
 import AddTaskPage from "../pages/Task/AddTaskPage";
 import EditTaskPage from "../pages/Task/EditTaskPage";
-import TaskBoardPage from "../pages/Task/TaskBoardPage";
 import TasksPage from "../pages/Task/TasksPage";
+import AddTaskAssignPage from "../pages/TaskAssign/AssignTaskToUserPage";
+import EditTaskAssignPage from "../pages/TaskAssign/EditAssignTaskPage";
 import TaskAssignPage from "../pages/TaskAssign/TaskAssignPage";
 import AddUserPage from "../pages/User/AddUserPage";
+import EditUserPage from "../pages/User/EditUserPage";
 import UsersPage from "../pages/User/UserPage";
 import UserProfile from "../pages/User/UserProfile";
 
-const adminRoutes = [
+const dashboardRoutes = [
 	{
 		path: "/",
 		element: <DashboardLayout />,
@@ -25,6 +27,10 @@ const adminRoutes = [
 			{
 				path: "/users",
 				element: <UsersPage />,
+			},
+			{
+				path: "/users/edit/:id",
+				element: <EditUserPage />,
 			},
 			{
 				path: "/users/profile",
@@ -47,11 +53,15 @@ const adminRoutes = [
 				element: <TaskAssignPage />,
 			},
 			{
-				path: "/tasks-board",
-				element: <TaskBoardPage />,
+				path: "/task/assigns/add",
+				element: <AddTaskAssignPage />,
+			},
+			{
+				path: "/task/assigns/edit/:id",
+				element: <EditTaskAssignPage />,
 			},
 		],
 	},
 ];
 
-export default adminRoutes;
+export default dashboardRoutes;

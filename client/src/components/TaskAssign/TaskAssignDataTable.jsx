@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import DeleteConfirmModal from "./../shared/DeleteConfirmModal";
 import ActionMenu from "./../shared/ActionMenu";
 import DataTable from "../shared/DataTable";
-import { useDeleteTaskAssignMutation } from "../../redux/slice/TaskAssignSlice";
+import { useDeleteTaskAssignMutation } from "../../redux/slice/taskAssignSlice";
 
 const TaskAssignDataTable = ({ data, refetch }) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -35,11 +35,11 @@ const TaskAssignDataTable = ({ data, refetch }) => {
 	};
 
 	const handleEdit = (id) => {
-		navigate(`/taskAssigns/edit/${id}`);
+		navigate(`/task/assigns/edit/${id}`);
 	};
 
 	const handleView = (id) => {
-		navigate(`/taskAssigns/${id}`);
+		navigate(`/task/assigns/${id}`);
 	};
 
 	const handleDeleteTaskAssign = async () => {

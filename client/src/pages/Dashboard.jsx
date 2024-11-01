@@ -1,122 +1,137 @@
 import { Row, Col, Card, Statistic } from "antd";
 import {
-	UserOutlined,
-	TeamOutlined,
-	CheckCircleOutlined,
-	HourglassOutlined,
-	SyncOutlined,
-} from "@ant-design/icons";
+	FaTasks,
+	FaHourglassHalf,
+	FaSyncAlt,
+	FaCheckCircle,
+	FaUser,
+	FaUsers,
+} from "react-icons/fa";
 import { useState, useEffect } from "react";
-
-// Mock Data (Replace with your actual data fetching)
-const mockData = {
-	totalTasks: 100,
-	tasksByStatus: {
-		pending: 25,
-		inProgress: 50,
-		completed: 25,
-	},
-	totalUsers: 150,
-	totalManagers: 10,
-};
+import { useGetDashboardStatsQuery } from "../redux/slice/statsSlice";
+import DateTime from "../components/shared/DateTime";
+import useAuth from "../hooks/useAuth";
 
 const Dashboard = () => {
-	const [stats, setStats] = useState(mockData);
+	const user = useAuth();
+	const [stats, setStats] = useState({
+		totalTasks: 0,
+		tasksByStatus: {
+			pending: 0,
+			inProgress: 0,
+			completed: 0,
+		},
+		totalUsers: 0,
+		totalManagers: 0,
+	});
 
-	// Use actual API call to fetch stats data
+	const { data, isLoading, error } = useGetDashboardStatsQuery();
+
 	useEffect(() => {
-		// Fetch data and update state
-		setStats(mockData);
-	}, []);
+		if (data?.doc) {
+			const statsData = {
+				totalTasks: data.doc.totalTasks,
+				tasksByStatus: {
+					pending: data.doc.tasksByStatus.pending,
+					inProgress: data.doc.tasksByStatus.inProgress,
+					completed: data.doc.tasksByStatus.completed,
+				},
+				totalUsers: data.doc.totalUsers,
+				totalManagers: data.doc.totalManagers,
+			};
+			setStats(statsData);
+		}
+	}, [data?.doc]);
+
+	console.log(data?.doc);
+
+	if (isLoading) return <div>Loading...</div>;
+	if (error) return <div>Error fetching stats!</div>;
 
 	return (
-		<div style={{ padding: "24px" }}>
-			<h2 className="font-bold text-2xl mb-4">Dashboard Overview</h2>
-
+		<div className="p-6 bg-gray-100 min-h-[80vh]">
+			<DateTime />
 			<Row gutter={[16, 16]}>
 				{/* Total Tasks */}
-				<Col xs={24} sm={12} md={8} lg={6}>
-					<Card>
+				<Col xs={24} sm={12} md={8} lg={8}>
+					<Card className="bg-blue-50 shadow-md rounded-lg">
 						<Statistic
-							title="Total Tasks"
+							title={<span className="font-semibold text-lg">Total Tasks</span>}
 							value={stats.totalTasks}
 							valueStyle={{ color: "#1890ff" }}
-							prefix={<CheckCircleOutlined />}
+							prefix={<FaTasks className="text-blue-500" />}
 						/>
 					</Card>
 				</Col>
-
 				{/* Pending Tasks */}
-				<Col xs={24} sm={12} md={8} lg={6}>
-					<Card>
+				<Col xs={24} sm={12} md={8} lg={8}>
+					<Card className="bg-orange-50 shadow-md rounded-lg">
 						<Statistic
-							title="Pending Tasks"
+							title={
+								<span className="font-semibold text-lg">Pending Tasks</span>
+							}
 							value={stats.tasksByStatus.pending}
 							valueStyle={{ color: "orange" }}
-							prefix={<HourglassOutlined />}
+							prefix={<FaHourglassHalf className="text-orange-500" />}
 						/>
 					</Card>
 				</Col>
-
 				{/* In Progress Tasks */}
-				<Col xs={24} sm={12} md={8} lg={6}>
-					<Card>
+				<Col xs={24} sm={12} md={8} lg={8}>
+					<Card className="bg-yellow-50 shadow-md rounded-lg">
 						<Statistic
-							title="In Progress Tasks"
+							title={
+								<span className="font-semibold text-lg">In Progress Tasks</span>
+							}
 							value={stats.tasksByStatus.inProgress}
 							valueStyle={{ color: "#1890ff" }}
-							prefix={<SyncOutlined />}
+							prefix={<FaSyncAlt className="text-blue-500" />}
 						/>
 					</Card>
 				</Col>
-
 				{/* Completed Tasks */}
-				<Col xs={24} sm={12} md={8} lg={6}>
-					<Card>
+				<Col xs={24} sm={12} md={8} lg={8}>
+					<Card className="bg-green-50 shadow-md rounded-lg">
 						<Statistic
-							title="Completed Tasks"
+							title={
+								<span className="font-semibold text-lg">Completed Tasks</span>
+							}
 							value={stats.tasksByStatus.completed}
 							valueStyle={{ color: "green" }}
-							prefix={<CheckCircleOutlined />}
+							prefix={<FaCheckCircle className="text-green-500" />}
 						/>
 					</Card>
 				</Col>
-
-				{/* Total Users */}
-				<Col xs={24} sm={12} md={8} lg={6}>
-					<Card>
-						<Statistic
-							title="Total Users"
-							value={stats.totalUsers}
-							valueStyle={{ color: "#3f8600" }}
-							prefix={<UserOutlined />}
-						/>
-					</Card>
-				</Col>
-
-				{/* Total Managers */}
-				<Col xs={24} sm={12} md={8} lg={6}>
-					<Card>
-						<Statistic
-							title="Total Managers"
-							value={stats.totalManagers}
-							valueStyle={{ color: "#722ed1" }}
-							prefix={<TeamOutlined />}
-						/>
-					</Card>
-				</Col>
-
-				{/* Additional Stats */}
-				<Col xs={24} sm={12} md={8} lg={6}>
-					<Card>
-						<Statistic
-							title="Other Metrics"
-							value={45}
-							valueStyle={{ color: "#faad14" }}
-							prefix={<TeamOutlined />}
-						/>
-					</Card>
-				</Col>
+				{/* Total Users - Admin Only */}
+				{user.role === "admin" && (
+					<Col xs={24} sm={12} md={8} lg={8}>
+						<Card className="bg-green-100 shadow-md rounded-lg">
+							<Statistic
+								title={
+									<span className="font-semibold text-lg">Total Users</span>
+								}
+								value={stats.totalUsers}
+								valueStyle={{ color: "#3f8600" }}
+								prefix={<FaUser className="text-green-500" />}
+							/>
+						</Card>
+					</Col>
+				)}
+				{/* Total Managers - Admin Only */}
+				{user.role === "admin" && (
+					<Col xs={24} sm={12} md={8} lg={8}>
+						<Card className="bg-purple-50 shadow-md rounded-lg">
+							<Statistic
+								title={
+									<span className="font-semibold text-lg">Total Managers</span>
+								}
+								value={stats.totalManagers}
+								valueStyle={{ color: "#722ed1" }}
+								prefix={<FaUsers className="text-purple-500" />}
+							/>
+						</Card>
+					</Col>
+				)}
 			</Row>
 		</div>
 	);

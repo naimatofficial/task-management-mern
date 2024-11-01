@@ -4,7 +4,7 @@ import { Form, Input, DatePicker, Row, Col, Button, Select } from "antd";
 import { useForm } from "antd/es/form/Form";
 import moment from "moment";
 
-const TaskForm = ({ mode, onSubmit, initialValues, isLoading }) => {
+const TaskForm = ({ mode, onSubmit, initialValues }) => {
 	const [form] = useForm();
 
 	// Set initial values when the component mounts or when mode changes
@@ -26,7 +26,7 @@ const TaskForm = ({ mode, onSubmit, initialValues, isLoading }) => {
 	};
 
 	return (
-		<Form form={form} layout="vertical" onFinish={onFinish}>
+		<Form form={form} layout="vertical" onFinish={onFinish} className="p-8">
 			{/* Title Field */}
 			<Row gutter={16}>
 				<Col xs={24} lg={12}>
@@ -44,7 +44,7 @@ const TaskForm = ({ mode, onSubmit, initialValues, isLoading }) => {
 							},
 						]}
 					>
-						<Input placeholder="Enter task title" />
+						<Input placeholder="Enter task title" className="py-2" />
 					</Form.Item>
 				</Col>
 
@@ -59,7 +59,7 @@ const TaskForm = ({ mode, onSubmit, initialValues, isLoading }) => {
 							},
 						]}
 					>
-						<Select placeholder="Select task status">
+						<Select size="large" placeholder="Select task status">
 							<Select.Option value="pending">Pending</Select.Option>
 							<Select.Option value="in-progress">In-progress</Select.Option>
 							<Select.Option value="completed">Completed</Select.Option>
@@ -86,6 +86,7 @@ const TaskForm = ({ mode, onSubmit, initialValues, isLoading }) => {
 							disabledDate={(current) =>
 								current && current < moment().startOf("day")
 							}
+							className="py-2"
 						/>
 					</Form.Item>
 				</Col>
@@ -122,6 +123,7 @@ const TaskForm = ({ mode, onSubmit, initialValues, isLoading }) => {
 							disabledDate={(current) =>
 								current && current < moment().startOf("day")
 							}
+							className="py-2"
 						/>
 					</Form.Item>
 				</Col>
@@ -136,7 +138,11 @@ const TaskForm = ({ mode, onSubmit, initialValues, isLoading }) => {
 					},
 				]}
 			>
-				<Input.TextArea rows={4} placeholder="Enter task description" />
+				<Input.TextArea
+					rows={4}
+					placeholder="Enter task description"
+					className="py-2"
+				/>
 			</Form.Item>
 
 			<Form.Item style={{ display: "flex", justifyContent: "flex-end" }}>

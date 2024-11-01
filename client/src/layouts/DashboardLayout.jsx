@@ -1,14 +1,16 @@
-import { Layout, theme } from "antd";
+import { Layout, message, theme } from "antd";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
-import { Outlet, redirect, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useAuth from "./../hooks/useAuth";
 import Loader from "./../components/shared/Loader";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/slice/authSlice";
+import { FaSignOutAlt, FaUser } from "react-icons/fa";
+import { useLogoutUserMutation } from "../redux/slice/userSlice";
 
-const { Content, Footer, Sider } = Layout;
+const { Content, Sider } = Layout;
 
 const DashboardLayout = () => {
 	const {
@@ -18,7 +20,7 @@ const DashboardLayout = () => {
 	const [collapsed, setCollapsed] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 
-	const [role, setRole] = useState(null);
+	const [logoutUser, { isLoading: isLogoutLoading }] = useLogoutUserMutation();
 
 	const navigate = useNavigate();
 	const user = useAuth();
@@ -26,8 +28,6 @@ const DashboardLayout = () => {
 	useEffect(() => {
 		if (!user) {
 			navigate("/auth/login");
-		} else if (user) {
-			setRole(user?.role);
 		}
 
 		setIsLoading(false);
@@ -35,33 +35,45 @@ const DashboardLayout = () => {
 
 	const dispatch = useDispatch();
 
-	const handleLogout = () => {
-		dispatch(logout());
-		window.location.href = "/auth/login";
+	const handleLogout = async () => {
+		try {
+			const userInfo = localStorage.getItem("userInfo");
+			const user = JSON.parse(userInfo);
+
+			await logoutUser(user?.accessToken);
+			dispatch(logout());
+			message.success("Logout successfully");
+
+			navigate("/auth/login", { replace: true });
+		} catch (error) {
+			message.error(error?.data?.message);
+		}
 	};
 
 	const handleProfile = () => {
-		navigate("/users/profile"); // Redirect to the user profile page
+		navigate("/users/profile");
 	};
 
 	const profileMenuItems = [
-		{ key: "1", label: "Profile", onClick: handleProfile },
-		{ key: "2", label: "Logout", onClick: handleLogout },
+		{ key: "1", icon: <FaUser />, label: "Profile", onClick: handleProfile },
+		{
+			key: "2",
+			icon: <FaSignOutAlt />,
+			label: "Logout",
+			onClick: handleLogout,
+		},
 	];
 
-	// Toggle function for sidebar
 	const toggleSidebar = () => {
 		setCollapsed(!collapsed);
 	};
 
-	return isLoading ? (
+	return isLoading || isLogoutLoading ? (
 		<div className="flex justify-center items-center">
 			<Loader />
 		</div>
 	) : (
 		<Layout style={{ height: "100vh", overflow: "hidden" }}>
-			{" "}
-			{/* Ensures the layout fills the viewport */}
 			<Sider
 				breakpoint="lg"
 				collapsedWidth="0"
@@ -75,13 +87,12 @@ const DashboardLayout = () => {
 			>
 				<Sidebar collapsed={collapsed} onCollapse={setCollapsed} />
 			</Sider>
-			{/* Main layout shift for content beside the sidebar */}
 			<Layout
 				style={{
-					marginLeft: collapsed ? 0 : 200, // Adjust based on the sidebar's width when expanded
+					marginLeft: collapsed ? 0 : 200,
 					paddingTop: "0px",
 					height: "100vh",
-					overflow: "hidden", // Prevents overflow of the full layout
+					overflow: "hidden",
 				}}
 			>
 				<Header
@@ -90,10 +101,11 @@ const DashboardLayout = () => {
 					style={{
 						position: "fixed",
 						top: 0,
-						width: `calc(100% - ${collapsed ? "0" : "200px"})`, // Adjust width based on sidebar
+						width: `calc(100% - ${collapsed ? "0" : "200px"})`,
 						zIndex: 10,
 					}}
 				/>
+
 				{/* Content layout that scrolls only when overflow occurs */}
 				<Content
 					style={{
@@ -102,7 +114,7 @@ const DashboardLayout = () => {
 						background: colorBgContainer,
 						borderRadius: borderRadiusLG,
 						overflowY: "auto",
-						height: "calc(100vh - 88px)", // Adjust for header and margin
+						height: "calc(100vh - 88px)",
 					}}
 				>
 					<Outlet />

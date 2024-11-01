@@ -9,7 +9,11 @@ import Loader from "../../components/shared/Loader";
 
 const EditTaskPage = () => {
 	const { id } = useParams();
-	const { data: task, isLoading: taskLoading } = useGetTaskDetailsQuery(id, {
+	const {
+		data: task,
+		isLoading: taskLoading,
+		refetch,
+	} = useGetTaskDetailsQuery(id, {
 		skip: !id,
 	});
 
@@ -20,6 +24,7 @@ const EditTaskPage = () => {
 	const handleSubmit = async (values) => {
 		try {
 			await updateTask({ id, ...values }).unwrap();
+			refetch();
 			message.success("Task updated successfully");
 			navigate("/tasks");
 		} catch (error) {

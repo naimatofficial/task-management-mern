@@ -11,13 +11,17 @@ const DataTable = ({ data, columns, current, setCurrent, pageSize }) => {
 
 	return (
 		<>
-			<Table
-				dataSource={paginatedData}
-				columns={columns}
-				rowKey={(record) => record._id}
-				pagination={false}
-				sticky
-			/>
+			<div className="overflow-x-auto">
+				<Table
+					dataSource={paginatedData}
+					columns={columns}
+					rowKey={(record) => record._id}
+					pagination={false}
+					sticky
+					virtual
+					className="w-full text-sm sm:text-base"
+				/>
+			</div>
 			<Pagination
 				current={current}
 				pageSize={pageSize}

@@ -2,7 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+.custom-select .ant-select-selector {
+	padding: 8px; /* Adjust padding as needed */
+	background-color: green; /* Set background color */
+}
+
+.custom-select .ant-select-selection {
+	background-color: lightblue; /* Set selection background color if needed */
+}
+
 @layer utilities {
+	.card-custom {
+		@apply bg-gradient-to-br from-gray-100 to-gray-50 p-6 rounded-xl shadow-md transform transition hover:shadow-lg;
+	}
+
+	.stat-title {
+		@apply text-gray-600 font-semibold text-lg;
+	}
+
+	.stat-value {
+		@apply text-3xl font-bold;
+	}
+
+	.stat-icon {
+		@apply text-3xl mr-3;
+	}
+
 	.carousel-arrow {
 		@apply absolute top-1/2 transform -translate-y-1/2 bg-primary-400 rounded-full p-2 shadow-md z-10;
 	}

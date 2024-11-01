@@ -1,41 +1,20 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
-import { Modal, Typography, Tag, Select, Button, Col, Row } from "antd";
-import dayjs from "dayjs"; // Optional: For formatting dates
-import { useGetUsersQuery } from "../../redux/slice/userSlice";
-import Loader from "../shared/Loader";
+import { Modal, Typography, Tag, Col, Row } from "antd";
+import dayjs from "dayjs";
 
 const { Title, Text } = Typography;
-const { Option } = Select;
 
-const TaskViewModal = ({ visible, onClose, task, onAssign }) => {
-	const [selectedUser, setSelectedUser] = useState(null);
-	const [searchTerm, setSearchTerm] = useState("");
-
-	const { data: users, isLoading } = useGetUsersQuery({});
-
-	const filteredUsers = users?.doc?.filter((user) =>
-		user.firstName.toLowerCase()?.includes(searchTerm?.toLowerCase())
-	);
-
-	const handleAssign = () => {
-		if (selectedUser) {
-			onAssign(task._id, selectedUser);
-			setSelectedUser(null);
-			onClose();
-		}
-	};
-
+const TaskViewModal = ({ visible, onClose, task }) => {
 	return (
 		<Modal
 			title="Task Details"
 			visible={visible}
 			onCancel={onClose}
 			footer={null}
-			width={800} // Increased width for better UI
+			width={800}
 		>
 			{task ? (
-				<>
+				<div className="border-t-2 p-4">
 					<Title level={4} style={{ marginBottom: 16 }}>
 						{task.title}
 					</Title>
@@ -46,8 +25,7 @@ const TaskViewModal = ({ visible, onClose, task, onAssign }) => {
 						</Text>
 						<Tag
 							color={getStatusColor(task.status)}
-							style={{ fontSize: "16px" }}
-							className="uppercase"
+							className="uppercase rounded-full p-1 px-2 font-bold"
 						>
 							{task.status}
 						</Tag>
@@ -71,32 +49,7 @@ const TaskViewModal = ({ visible, onClose, task, onAssign }) => {
 							</Text>
 						</Col>
 					</Row>
-
-					<Text strong style={{ fontSize: "16px", paddingBottom: "10px" }}>
-						Assign to User
-					</Text>
-					<Select
-						placeholder="Select a user"
-						style={{ width: "100%" }}
-						onChange={(value) => setSelectedUser(value)}
-						value={selectedUser}
-					>
-						{filteredUsers.map((user) => (
-							<Option key={user.id} value={user.id}>
-								{user.name}
-							</Option>
-						))}
-					</Select>
-					<div style={{ marginTop: "16px", textAlign: "right" }}>
-						<Button
-							type="primary"
-							onClick={handleAssign}
-							disabled={!selectedUser}
-						>
-							Assign Task
-						</Button>
-					</div>
-				</>
+				</div>
 			) : (
 				<Text>No task details available.</Text>
 			)}

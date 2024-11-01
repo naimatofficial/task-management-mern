@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { message, Tag } from "antd";
 import { useDeleteUserMutation } from "../../redux/slice/userSlice";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import DeleteConfirmModal from "./../shared/DeleteConfirmModal";
 import ActionMenu from "./../shared/ActionMenu";
 import DataTable from "../shared/DataTable";
@@ -105,6 +105,23 @@ const UserDataTable = ({ data, refetch }) => {
 			key: "email",
 		},
 		{
+			title: "Status",
+			dataIndex: "active",
+			key: "active",
+			render: (active) => {
+				const color = active ? "green" : "red";
+				const text = active ? "Active" : "Inactive";
+				return (
+					<Tag color={color} className="rounded-full font-bold capitalize">
+						{text}
+					</Tag>
+				);
+			},
+			width: 100,
+			align: "center",
+		},
+
+		{
 			title: "Role",
 			dataIndex: "role",
 			key: "role",
@@ -130,19 +147,7 @@ const UserDataTable = ({ data, refetch }) => {
 				);
 			},
 			width: 100,
-		},
-		{
-			title: "Assign",
-			key: "assign",
-			render: (_, record) => (
-				<div className="flex justify-center">
-					<Link to={`/tasks/assign/${record._id}`} className="text-blue-500">
-						Assign
-					</Link>
-				</div>
-			),
-			className: "text-center",
-			width: 100,
+			align: "center",
 		},
 		{
 			title: "Actions",
@@ -159,6 +164,7 @@ const UserDataTable = ({ data, refetch }) => {
 			),
 			className: "text-center",
 			width: 100,
+			align: "center",
 		},
 	];
 

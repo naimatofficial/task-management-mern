@@ -64,11 +64,12 @@ const Sidebar = () => {
 
 	return (
 		<div style={{ height: "100%" }}>
-			<Menu theme="dark" mode="inline" defaultSelectedKeys={["0"]}>
-				<Menu.Item>
-					<h1 className="mb-4 text-xl text-center py-2 mt-2 "> 📝TaskFlo</h1>
-				</Menu.Item>
-
+			<Menu
+				theme="dark"
+				mode="inline"
+				defaultSelectedKeys={["0"]}
+				className="py-4"
+			>
 				{filteredItems.map((item, index) => (
 					<Menu.Item key={index} icon={<item.icon />}>
 						<Link to={item.path}>{item.label}</Link>
