@@ -14,9 +14,9 @@ const UserProfile = () => {
 
 	const navigate = useNavigate();
 
-	const { data, isLoading } = useGetUserDetailsQuery(userId || user?._id);
-
-	if (!data || !data.doc) return <p>User details not found!</p>;
+	const { data, isLoading } = useGetUserDetailsQuery(userId || user?._id, {
+		skip: !user._id,
+	});
 
 	const userData = data?.doc;
 
