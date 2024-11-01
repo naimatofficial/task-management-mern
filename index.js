@@ -1,5 +1,5 @@
-import app from "./app.js";
-import keys from "./config/keys.js";
+import app from "./backend/app.js";
+import keys from "./backend/config/keys.js";
 
 const port = keys.port || 3000;
 
