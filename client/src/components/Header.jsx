@@ -39,7 +39,7 @@ const Header = ({ profileMenuItems, toggleSidebar }) => {
 			</h1>
 			<div className="logo" />
 			<Dropdown
-				menu={<Menu items={profileMenuItems} />}
+				menu={{ items: profileMenuItems }}
 				trigger={["click"]}
 				placement="bottomRight"
 			>
