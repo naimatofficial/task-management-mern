@@ -10,7 +10,6 @@ const UserForm = ({ mode, onSubmit, initialValues }) => {
 	const user = useAuth();
 
 	const isAdmin = user.role === "admin";
-	const isManager = user.role === "manager";
 
 	// Set initial values when the component mounts or when mode changes
 	useEffect(() => {
@@ -20,8 +19,8 @@ const UserForm = ({ mode, onSubmit, initialValues }) => {
 	}, [initialValues, form]);
 
 	const onFinish = (values) => {
-		console.log("Form values:", values);
 		onSubmit(values);
+		form.reset();
 	};
 
 	return (
@@ -92,7 +91,7 @@ const UserForm = ({ mode, onSubmit, initialValues }) => {
 			</Row>
 
 			<Row gutter={16}>
-				{isAdmin && mode === "edit" && (
+				{isAdmin && (
 					<Col xs={24} lg={12}>
 						<Form.Item
 							name="role"
@@ -113,7 +112,7 @@ const UserForm = ({ mode, onSubmit, initialValues }) => {
 					</Col>
 				)}
 
-				{!isManager && (
+				{isAdmin && (
 					<Col xs={24} lg={12}>
 						<Form.Item
 							name="active"

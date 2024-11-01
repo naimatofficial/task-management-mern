@@ -1,8 +1,8 @@
-import { Layout, message, theme } from "antd";
+import { Layout, message, Spin, theme } from "antd";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { Outlet, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import useAuth from "./../hooks/useAuth";
 import Loader from "./../components/shared/Loader";
 import { useDispatch } from "react-redux";
@@ -117,7 +117,9 @@ const DashboardLayout = () => {
 						height: "calc(100vh - 88px)",
 					}}
 				>
-					<Outlet />
+					<Suspense fallback={<Spin size="large" />}>
+						<Outlet />
+					</Suspense>
 				</Content>
 			</Layout>
 		</Layout>

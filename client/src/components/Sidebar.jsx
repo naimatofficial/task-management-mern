@@ -33,7 +33,7 @@ const sidebarItems = [
 		icon: FaClipboardCheck,
 		label: "Task Assigns",
 		path: "/task/assigns",
-		roles: ["admin", "manager"],
+		roles: ["admin", "manager", "user"],
 	},
 	{
 		icon: FaUser,
@@ -44,7 +44,6 @@ const sidebarItems = [
 ];
 
 const Sidebar = () => {
-	// Get the current user role
 	const user = useAuth();
 	const userRole = user?.role || "user";
 
@@ -63,16 +62,31 @@ const Sidebar = () => {
 		});
 
 	return (
-		<div style={{ height: "100%" }}>
+		<div style={{ height: "100%", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+			{" "}
+			{/* Dark, semi-transparent background */}
 			<Menu
 				theme="dark"
 				mode="inline"
 				defaultSelectedKeys={["0"]}
 				className="py-4"
+				style={{
+					backgroundColor: "rgba(0, 0, 0, 0.5)",
+					backdropFilter: "blur(10px)",
+					borderRadius: "12px",
+					color: "#d4d4d8",
+				}}
 			>
 				{filteredItems.map((item, index) => (
-					<Menu.Item key={index} icon={<item.icon />}>
-						<Link to={item.path}>{item.label}</Link>
+					<Menu.Item
+						key={index}
+						icon={<item.icon style={{ color: "#a5b4fc" }} />}
+						style={{ color: "#d4d4d8" }}
+						className="hover:bg-blue-900/20"
+					>
+						<Link to={item.path} style={{ color: "#d4d4d8" }}>
+							{item.label}
+						</Link>
 					</Menu.Item>
 				))}
 			</Menu>

@@ -63,8 +63,6 @@ export const protect = catchAsync(async (req, res, next) => {
 	// 6) Verify the access token
 	const decoded = await promisify(jwt.verify)(token, keys.jwtSecret);
 
-	console.log(decoded);
-
 	// 7) Check if the user still exists
 	const currentUser = await User.findById(decoded.userId);
 
@@ -93,7 +91,6 @@ export const protect = catchAsync(async (req, res, next) => {
 // restrictTo is a Wrapper function to return the middleware function
 export const restrictTo = (...roles) => {
 	return (req, res, next) => {
-		console.log(req.user.role);
 		if (!roles.includes(req.user?.role)) {
 			return next(
 				new AppError("You do not have permission to perform this action.", 403)

@@ -7,6 +7,7 @@ import {
 } from "../../redux/slice/userSlice";
 import Loader from "../../components/shared/Loader";
 import useAuth from "../../hooks/useAuth";
+import { useEffect } from "react";
 
 const EditUserPage = () => {
 	const { id } = useParams();
@@ -24,6 +25,12 @@ const EditUserPage = () => {
 	const member = useAuth();
 
 	const isAdmin = member?.role === "admin";
+
+	useEffect(() => {
+		if (member?.role !== "admin" && member._id !== id) {
+			navigate("/");
+		}
+	}, [member?.role, navigate, member, id]);
 
 	const handleSubmit = async (values) => {
 		try {

@@ -176,6 +176,7 @@ const TaskDataTable = ({ data, refetch }) => {
 							onClick={() => clearFilters()}
 							size="small"
 							style={{ width: 90 }}
+							className="border-none"
 						>
 							Reset
 						</Button>
@@ -244,94 +245,6 @@ const TaskDataTable = ({ data, refetch }) => {
 			width: 100,
 		},
 	];
-
-	// const columns = [
-	// 	{
-	// 		title: "S.No",
-	// 		dataIndex: "index",
-	// 		key: "index",
-	// 		render: (_, __, index) => index + 1 + (current - 1) * pageSize,
-	// 		className: "text-center",
-	// 		width: 80,
-	// 	},
-	// 	{
-	// 		title: "Task Name",
-	// 		dataIndex: "title",
-	// 		key: "title",
-	// 	},
-
-	// 	{
-	// 		title: "Start Date",
-	// 		dataIndex: "startDate",
-	// 		key: "startDate",
-	// 		render: (date) => moment(date).format("DD MMMM YYYY"),
-	// 		className: "text-center",
-	// 		width: 200,
-	// 		align: "center",
-	// 	},
-	// 	{
-	// 		title: "Due Date",
-	// 		dataIndex: "endDate",
-	// 		key: "endDate",
-	// 		render: (date) => moment(date).format("DD MMMM YYYY"),
-	// 		className: "text-center",
-	// 		width: 200,
-	// 		align: "center",
-	// 	},
-	// 	{
-	// 		title: "Status",
-	// 		dataIndex: "status",
-	// 		key: "status",
-	// 		align: "center",
-
-	// 		render: (status) => {
-	// 			let color;
-	// 			let text;
-
-	// 			switch (status) {
-	// 				case "pending":
-	// 					color = "orange"; // Updated color for pending
-	// 					text = "Pending";
-	// 					break;
-	// 				case "in-progress":
-	// 					color = "blue";
-	// 					text = "In Progress";
-	// 					break;
-	// 				case "completed":
-	// 					color = "green";
-	// 					text = "Completed";
-	// 					break;
-	// 				default:
-	// 					color = "default";
-	// 					text = "Unknown";
-	// 			}
-
-	// 			return (
-	// 				<Tag color={color} className={`rounded-full font-bold capitalize`}>
-	// 					{text}
-	// 				</Tag>
-	// 			);
-	// 		},
-	// 		width: 120,
-	// 	},
-	// 	{
-	// 		title: "Actions",
-	// 		key: "actions",
-	// 		render: (_, record) => (
-	// 			<div className="flex justify-center gap-2">
-	// 				<ActionMenu
-	// 					recordId={record._id}
-	// 					onEdit={() => handleEdit(record._id)}
-	// 					onView={() => handleView(record)}
-	// 					onDelete={() => showModal(record._id)}
-	// 				/>
-	// 			</div>
-	// 		),
-	// 		className: "text-center",
-	// 		width: 100,
-	// 		align: "center",
-	// 	},
-	// ];
 
 	return (
 		<>

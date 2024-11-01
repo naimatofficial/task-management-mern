@@ -7,10 +7,12 @@ import DeleteConfirmModal from "./../shared/DeleteConfirmModal";
 import ActionMenu from "./../shared/ActionMenu";
 import DataTable from "../shared/DataTable";
 
-const UserDataTable = ({ data, refetch }) => {
+const UserDataTable = ({ data, refetch, user }) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [userId, setUserId] = useState(null);
 	const [current, setCurrent] = useState(1);
+
+	const isAdmin = user.role === "admin";
 
 	const pageSize = 5;
 
@@ -149,23 +151,27 @@ const UserDataTable = ({ data, refetch }) => {
 			width: 100,
 			align: "center",
 		},
-		{
-			title: "Actions",
-			key: "actions",
-			render: (_, record) => (
-				<div className="flex justify-center gap-2">
-					<ActionMenu
-						recordId={record._id}
-						onEdit={() => handleEdit(record._id)}
-						onView={() => handleView(record._id)}
-						onDelete={() => showModal(record._id)}
-					/>
-				</div>
-			),
-			className: "text-center",
-			width: 100,
-			align: "center",
-		},
+		...(isAdmin
+			? [
+					{
+						title: "Actions",
+						key: "actions",
+						render: (_, record) => (
+							<div className="flex justify-center gap-2">
+								<ActionMenu
+									recordId={record._id}
+									onEdit={() => handleEdit(record._id)}
+									onView={() => handleView(record._id)}
+									onDelete={() => showModal(record._id)}
+								/>
+							</div>
+						),
+						className: "text-center",
+						width: 100,
+						align: "center",
+					},
+			  ]
+			: []),
 	];
 
 	return (
@@ -190,6 +196,7 @@ const UserDataTable = ({ data, refetch }) => {
 
 UserDataTable.propTypes = {
 	data: PropTypes.array.isRequired,
+	user: PropTypes.object.isRequired,
 	refetch: PropTypes.func.isRequired,
 };
 

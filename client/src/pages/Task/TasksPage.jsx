@@ -17,8 +17,6 @@ const TasksPage = () => {
 		}
 	}, [tasks?.doc]);
 
-	console.log({ filteredData });
-
 	// Handle search functionality
 	const handleSearch = (e) => {
 		const value = e.target.value;
@@ -31,7 +29,6 @@ const TasksPage = () => {
 		setFilteredData(filteredTasks);
 	};
 
-	console.log(tasks);
 	return isLoading ? (
 		<Loader />
 	) : (

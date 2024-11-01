@@ -1,16 +1,22 @@
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import { message, Tag } from "antd";
+import { Button, message, Tag, DatePicker } from "antd";
 import { useNavigate } from "react-router-dom";
 import DeleteConfirmModal from "./../shared/DeleteConfirmModal";
 import ActionMenu from "./../shared/ActionMenu";
 import DataTable from "../shared/DataTable";
 import { useDeleteTaskAssignMutation } from "../../redux/slice/taskAssignSlice";
+import moment from "moment";
+import { FaSearchPlus } from "react-icons/fa";
+const { RangePicker } = DatePicker;
 
-const TaskAssignDataTable = ({ data, refetch }) => {
+const TaskAssignDataTable = ({ data, refetch, user }) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [taskAssignId, setTaskAssignId] = useState(null);
 	const [current, setCurrent] = useState(1);
+
+	const isManager = user?.role === "manager";
+	const isUser = user?.role === "user";
 
 	const pageSize = 5;
 
@@ -65,74 +71,84 @@ const TaskAssignDataTable = ({ data, refetch }) => {
 			className: "text-center",
 			width: 80,
 		},
-		{
-			title: "User",
-			dataIndex: "user",
-			key: "user",
-			render: (_, record) => {
-				// Get the first character of the first name
-				const initial = record?.user?.firstName.charAt(0).toUpperCase();
+		...(isUser
+			? []
+			: [
+					{
+						title: "User",
+						dataIndex: "user",
+						key: "user",
+						render: (_, record) => {
+							// Get the first character of the first name
+							const initial = record?.user?.firstName.charAt(0).toUpperCase();
 
-				return (
-					<div style={{ display: "flex", alignItems: "center" }}>
-						<div
-							style={{
-								width: "35px",
-								height: "35px",
-								borderRadius: "50%",
-								backgroundColor: "#6688",
-								color: "white",
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-								marginRight: "10px",
-								fontWeight: "bold",
-								fontSize: "16px",
-							}}
-						>
-							{initial}
-						</div>
-						<span>{`${record?.user?.firstName} ${
-							record?.user?.lastName ? record?.user?.lastName : ""
-						}`}</span>
-					</div>
-				);
-			},
-		},
-		{
-			title: "Manager",
-			dataIndex: "manager",
-			key: "manager",
-			render: (_, record) => {
-				// Get the first character of the first name
-				const initial = record?.manager?.firstName.charAt(0).toUpperCase();
+							return (
+								<div style={{ display: "flex", alignItems: "center" }}>
+									<div
+										style={{
+											width: "35px",
+											height: "35px",
+											borderRadius: "50%",
+											backgroundColor: "#6688",
+											color: "white",
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center",
+											marginRight: "10px",
+											fontWeight: "bold",
+											fontSize: "16px",
+										}}
+									>
+										{initial}
+									</div>
+									<span>{`${record?.user?.firstName} ${
+										record?.user?.lastName ? record?.user?.lastName : ""
+									}`}</span>
+								</div>
+							);
+						},
+					},
+			  ]),
+		...(!isManager
+			? [
+					{
+						title: "Manager",
+						dataIndex: "manager",
+						key: "manager",
+						render: (_, record) => {
+							// Get the first character of the first name
+							const initial = record?.manager?.firstName
+								.charAt(0)
+								.toUpperCase();
 
-				return (
-					<div style={{ display: "flex", alignItems: "center" }}>
-						<div
-							style={{
-								width: "35px",
-								height: "35px",
-								borderRadius: "50%",
-								backgroundColor: "#6688",
-								color: "white",
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-								marginRight: "10px",
-								fontWeight: "bold",
-								fontSize: "16px",
-							}}
-						>
-							{initial}
-						</div>
-						<span>{`${record?.manager?.firstName} ${
-							record?.manager?.lastName ? record?.manager?.lastName : ""
-						}`}</span>
-					</div>
-				);
-			},
-		},
+							return (
+								<div style={{ display: "flex", alignItems: "center" }}>
+									<div
+										style={{
+											width: "35px",
+											height: "35px",
+											borderRadius: "50%",
+											backgroundColor: "#6688",
+											color: "white",
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center",
+											marginRight: "10px",
+											fontWeight: "bold",
+											fontSize: "16px",
+										}}
+									>
+										{initial}
+									</div>
+									<span>{`${record?.manager?.firstName} ${
+										record?.manager?.lastName ? record?.manager?.lastName : ""
+									}`}</span>
+								</div>
+							);
+						},
+					},
+			  ]
+			: []),
 		{
 			title: "Task",
 			dataIndex: "task",
@@ -140,18 +156,70 @@ const TaskAssignDataTable = ({ data, refetch }) => {
 			render: (_, record) => `${record?.task?.title}`,
 		},
 		{
+			title: "Due Date",
+			dataIndex: "endDate",
+			key: "endDate",
+			align: "center",
+			width: 200,
+			render: (date) => moment(date).format("DD MMMM YYYY"),
+			// Due Date Filter
+			filterDropdown: ({
+				setSelectedKeys,
+				selectedKeys,
+				confirm,
+				clearFilters,
+			}) => (
+				<div style={{ padding: 8 }}>
+					<RangePicker
+						onChange={(dates) => {
+							setSelectedKeys(dates ? [dates] : []);
+						}}
+						value={selectedKeys[0]}
+						style={{ marginBottom: 8, display: "block" }}
+					/>
+					<div style={{ display: "flex", justifyContent: "space-between" }}>
+						<Button
+							type="primary"
+							onClick={() => confirm()}
+							icon={<FaSearchPlus />}
+							size="small"
+							style={{ width: 90 }}
+						>
+							Filter
+						</Button>
+						<Button
+							onClick={() => clearFilters()}
+							size="small"
+							style={{ width: 90 }}
+							className="border-none"
+						>
+							Reset
+						</Button>
+					</div>
+				</div>
+			),
+			onFilter: (value, record) => {
+				if (!value || value.length === 0) return true;
+				const [start, end] = value;
+				return moment(record.task.endDate).isBetween(start, end, "days", "[]");
+			},
+		},
+		{
 			title: "Status",
 			dataIndex: "status",
 			key: "status",
 			align: "center",
-
+			// Status Filter
+			filters: [
+				{ text: "Pending", value: "pending" },
+				{ text: "In Progress", value: "in-progress" },
+				{ text: "Completed", value: "completed" },
+			],
+			onFilter: (value, record) => record?.task?.status === value,
 			render: (_, record) => {
-				const task = record?.task;
-				let status = task?.status || "pending";
+				let status = record?.task?.status;
 
-				let color;
-				let text;
-
+				let color, text;
 				switch (status) {
 					case "pending":
 						color = "orange";
@@ -169,32 +237,36 @@ const TaskAssignDataTable = ({ data, refetch }) => {
 						color = "default";
 						text = "Unknown";
 				}
-
 				return (
-					<Tag color={color} className={`rounded-full font-bold capitalize`}>
+					<Tag color={color} className="rounded-full font-bold capitalize">
 						{text}
 					</Tag>
 				);
 			},
 			width: 120,
 		},
-		{
-			title: "Actions",
-			key: "actions",
-			render: (_, record) => (
-				<div className="flex justify-center gap-2">
-					<ActionMenu
-						recordId={record._id}
-						onEdit={() => handleEdit(record._id)}
-						onView={() => handleView(record._id)}
-						onDelete={() => showModal(record._id)}
-					/>
-				</div>
-			),
-			className: "text-center",
-			width: 100,
-			align: "center",
-		},
+
+		...(isUser
+			? []
+			: [
+					{
+						title: "Actions",
+						key: "actions",
+						render: (_, record) => (
+							<div className="flex justify-center gap-2">
+								<ActionMenu
+									recordId={record._id}
+									onEdit={() => handleEdit(record._id)}
+									onView={() => handleView(record._id)}
+									onDelete={() => showModal(record._id)}
+								/>
+							</div>
+						),
+						className: "text-center",
+						width: 100,
+						align: "center",
+					},
+			  ]),
 	];
 
 	return (
@@ -219,6 +291,7 @@ const TaskAssignDataTable = ({ data, refetch }) => {
 
 TaskAssignDataTable.propTypes = {
 	data: PropTypes.array.isRequired,
+	user: PropTypes.object.isRequired,
 	refetch: PropTypes.func.isRequired,
 };
 

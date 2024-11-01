@@ -30,8 +30,8 @@ const LoginForm = () => {
 			const avatarBg = getRandomColor();
 
 			dispatch(setCredentials({ ...res, avatarBg }));
-			navigate("/");
 			message.success(`Welcome ${res?.user?.firstName || "back"}!`);
+			navigate("/");
 		} catch (error) {
 			message.error(error?.data?.message || "Login failed. Please try again.");
 		} finally {
@@ -40,13 +40,7 @@ const LoginForm = () => {
 	};
 
 	return (
-		<div>
-			<div className="mb-8">
-				<h1 className="text-2xl font-bold text-gray-900">Login</h1>
-				<h1 className="text-base text-gray-700">
-					Welcome back to Task Management
-				</h1>
-			</div>
+		<div className="p-2">
 			<Form
 				name="loginForm"
 				layout="vertical"
@@ -70,17 +64,19 @@ const LoginForm = () => {
 					<Input.Password placeholder="Password" className="py-2" />
 				</Form.Item>
 
-				<Form.Item>
-					<Button
-						type="primary"
-						htmlType="submit"
-						loading={loading}
-						block
-						className="py-6 px-12 text-lg"
-					>
-						{isLoading ? "is loging..." : "Continue"}
-					</Button>
-				</Form.Item>
+				<div className="mt-8">
+					<Form.Item>
+						<Button
+							type="primary"
+							htmlType="submit"
+							loading={loading}
+							block
+							className="py-6 px-12 text-lg"
+						>
+							{isLoading ? "is loging..." : "Continue"}
+						</Button>
+					</Form.Item>
+				</div>
 			</Form>
 		</div>
 	);

@@ -8,19 +8,24 @@ import { Button } from "antd";
 
 const TaskAssignPage = () => {
 	const [managerId, setManagerId] = useState(null);
+	const [userId, setUserId] = useState(null);
 
 	const user = useAuth();
+
+	const { data, isLoading, refetch } = useGetTaskAssignsQuery(
+		managerId ? { manager: managerId } : userId ? { user: userId } : {},
+		{ skip: !user }
+	);
 
 	useEffect(() => {
 		if (user?.role === "manager") {
 			setManagerId(user._id);
+		} else if (user?.role === "user") {
+			setUserId(user?._id);
 		}
-	}, [user]);
 
-	const { data, isLoading, refetch } = useGetTaskAssignsQuery(
-		managerId ? { manager: managerId } : {},
-		{ skip: !user }
-	);
+		refetch();
+	}, [user, data, refetch]);
 
 	return isLoading ? (
 		<Loader />
@@ -40,7 +45,7 @@ const TaskAssignPage = () => {
 			</div>
 
 			{data?.doc && data?.results > 0 ? (
-				<TaskAssignDataTable data={data?.doc} refetch={refetch} />
+				<TaskAssignDataTable data={data?.doc} refetch={refetch} user={user} />
 			) : (
 				<div className="text-center text-gray-600 text-lg">
 					<p> No tasks found!</p>

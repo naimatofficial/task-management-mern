@@ -19,6 +19,7 @@ const DataTable = ({ data, columns, current, setCurrent, pageSize }) => {
 					pagination={false}
 					sticky
 					virtual
+					scroll={{ x: 800 }}
 					className="w-full text-sm sm:text-base"
 				/>
 			</div>

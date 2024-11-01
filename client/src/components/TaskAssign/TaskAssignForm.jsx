@@ -26,6 +26,7 @@ const TaskAssignForm = ({ mode, onSubmit, initialValues }) => {
 
 	const onFinish = (values) => {
 		onSubmit(values);
+		form.reset();
 	};
 
 	return usersLoading || tasksLoading ? (

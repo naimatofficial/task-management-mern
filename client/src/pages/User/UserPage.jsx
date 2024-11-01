@@ -1,8 +1,8 @@
 import { useGetUsersQuery } from "./../../redux/slice/userSlice";
 import Loader from "./../../components/shared/Loader";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import UserDataTable from "../../components/User/UserDataTable";
-import { Button } from "antd";
+import { Button, Input } from "antd";
 import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 
@@ -11,15 +11,16 @@ const UsersPage = () => {
 	const [filteredData, setFilteredData] = useState([]);
 
 	const user = useAuth();
-	const [userId, setUserId] = useState(null);
+
+	const navigate = useNavigate();
 
 	const { data: users, isLoading, refetch } = useGetUsersQuery({});
 
 	useEffect(() => {
-		if (user?.role === "manager" || user?.role === "user") {
-			setUserId(user?._id);
+		if (user?.role === "user") {
+			navigate("/");
 		}
-	}, [user]);
+	}, [navigate, user]);
 
 	useEffect(() => {
 		if (users?.doc) {
@@ -27,17 +28,16 @@ const UsersPage = () => {
 		}
 	}, [users?.doc]);
 
-	console.log({ filteredData });
-
-	// Handle search functionality
 	const handleSearch = (e) => {
 		const value = e.target.value;
 		setSearchText(value);
 
-		// Filter data based on search input
-		const filteredusers = users?.doc?.filter((user) =>
-			user.title.toLowerCase().includes(value.toLowerCase())
-		);
+		const filteredusers = users?.doc?.filter((user) => {
+			const username = user.firstName + user.lastName;
+
+			return username.toLowerCase().includes(value.toLowerCase());
+		});
+
 		setFilteredData(filteredusers);
 	};
 
@@ -45,21 +45,31 @@ const UsersPage = () => {
 		<Loader />
 	) : (
 		<div className="p-4">
-			<div className="flex justify-between items-center px-2 py-2 mb-2">
-				<h2 className="font-bold text-2xl text-gray-900">All Users</h2>
-				<Link to="/add-user">
-					<Button
-						type="primary"
-						htmlType="submit"
-						style={{ padding: "20px 30px", fontSize: "16px" }}
-					>
-						Add User
-					</Button>
-				</Link>
+			<h2 className="font-bold text-2xl text-gray-900 mb-2">All Users</h2>
+			<div className="flex justify-between items-center gap-4 px-2 py-2 mb-2">
+				<div className="flex-grow">
+					<Input
+						placeholder="Search tasks here"
+						value={searchText}
+						onChange={handleSearch}
+						className="py-2"
+					/>
+				</div>
+				{user?.role === "admin" && (
+					<Link to="/add-user">
+						<Button
+							type="primary"
+							htmlType="submit"
+							style={{ padding: "20px 30px", fontSize: "16px" }}
+						>
+							Add User
+						</Button>
+					</Link>
+				)}
 			</div>
 
-			{users && users?.doc && users?.results > 0 ? (
-				<UserDataTable data={users?.doc} refetch={refetch} />
+			{users && users?.doc && users?.results > 0 && filteredData ? (
+				<UserDataTable data={filteredData} refetch={refetch} user={user} />
 			) : (
 				<div className="text-center text-gray-600 text-lg">
 					<p> No users found!</p>
