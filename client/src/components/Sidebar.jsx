@@ -58,6 +58,10 @@ const Sidebar = () => {
 			) {
 				return { ...item, label: "My Tasks" };
 			}
+
+			if (item.label === "Task Assigns" && userRole === "user") {
+				return { ...item, label: "Assigned to me" };
+			}
 			return item;
 		});
 

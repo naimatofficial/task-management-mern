@@ -32,16 +32,20 @@ const TaskAssignPage = () => {
 	) : (
 		<div className="p-4">
 			<div className="flex justify-between items-center px-2 py-2 mb-2">
-				<h2 className="font-bold text-2xl text-gray-900">All Assign Tasks</h2>
-				<Link to="/task/assigns/add">
-					<Button
-						type="primary"
-						htmlType="submit"
-						style={{ padding: "20px 30px", fontSize: "16px" }}
-					>
-						Assign Task
-					</Button>
-				</Link>
+				<h2 className="font-bold text-2xl text-gray-900">
+					{user.role === "user" ? "Tasks Assigned to me" : "All Assign Tasks"}
+				</h2>
+				{user.role === "user" ? null : (
+					<Link to="/task/assigns/add">
+						<Button
+							type="primary"
+							htmlType="submit"
+							style={{ padding: "20px 30px", fontSize: "16px" }}
+						>
+							Assign Task
+						</Button>
+					</Link>
+				)}
 			</div>
 
 			{data?.doc && data?.results > 0 ? (
