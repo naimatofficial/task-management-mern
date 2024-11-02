@@ -8,7 +8,7 @@ import EditTaskAssignPage from "../pages/TaskAssign/EditAssignTaskPage";
 import TaskAssignPage from "../pages/TaskAssign/TaskAssignPage";
 import AddUserPage from "../pages/User/AddUserPage";
 import EditUserPage from "../pages/User/EditUserPage";
-import UsersPage from "../pages/User/UserPage";
+import UsersPage from "../pages/User/UsersPage";
 import UserProfile from "../pages/User/UserProfile";
 
 const dashboardRoutes = [

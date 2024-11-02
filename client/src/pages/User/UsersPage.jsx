@@ -1,5 +1,5 @@
-import { useGetUsersQuery } from "./../../redux/slice/userSlice";
-import Loader from "./../../components/shared/Loader";
+import { useGetUsersQuery } from "../../redux/slice/userSlice";
+import Loader from "../../components/shared/Loader";
 import { Link, useNavigate } from "react-router-dom";
 import UserDataTable from "../../components/User/UserDataTable";
 import { Button, Input } from "antd";

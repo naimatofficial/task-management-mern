@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Layout, Dropdown, Avatar, Menu, Space, Button } from "antd";
+import { Layout, Dropdown, Avatar, Space, Button } from "antd";
 import { FaBars, FaUserCircle } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
