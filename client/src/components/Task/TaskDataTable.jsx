@@ -268,6 +268,7 @@ const TaskDataTable = ({ data, refetch }) => {
 				isModalVisible={isModalVisible}
 				handleCancel={handleCancel}
 				handleOk={handleDeleteTask}
+				task="task"
 			/>
 		</>
 	);

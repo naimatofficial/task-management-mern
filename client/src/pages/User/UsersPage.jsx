@@ -49,7 +49,7 @@ const UsersPage = () => {
 			<div className="flex justify-between items-center gap-4 px-2 py-2 mb-2">
 				<div className="flex-grow">
 					<Input
-						placeholder="Search tasks here"
+						placeholder="Search users here"
 						value={searchText}
 						onChange={handleSearch}
 						className="py-2"

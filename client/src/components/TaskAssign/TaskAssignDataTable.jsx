@@ -300,6 +300,7 @@ const TaskAssignDataTable = ({ data, refetch, user }) => {
 				isModalVisible={isModalVisible}
 				handleCancel={handleCancel}
 				handleOk={handleDeleteTaskAssign}
+				task='task assign'
 			/>
 		</>
 	);

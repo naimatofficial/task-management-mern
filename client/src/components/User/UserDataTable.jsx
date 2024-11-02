@@ -189,6 +189,7 @@ const UserDataTable = ({ data, refetch, user }) => {
 				isModalVisible={isModalVisible}
 				handleCancel={handleCancel}
 				handleOk={handleDeleteUser}
+				task="user"
 			/>
 		</>
 	);
